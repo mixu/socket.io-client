@@ -3141,9 +3141,10 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   XHR.check = function (socket, xdomain) {
     try {
       var request = io.util.request(xdomain);
-      var socket_protocol = socket.options.secure ? 'https' : http;
-      var global_protocol = global.location.protocol.split(':')[0];
-      if (request && !(global.XDomainRequest && request instanceof XDomainRequest && socket_protocol != global_protocol)  ) {
+      var uses_xdomainrequest = (global.XDomainRequest && request instanceof XDomainRequest);
+      var socket_protocol = (socket && socket.options && socket.options.secure ? 'https:' : 'http:');
+      var is_cross_protocol = (socket_protocol != global.location.protocol);
+      if (request && !(uses_xdomainrequest && is_cross_protocol)) {
         return true;
       }
     } catch(e) {}
@@ -3152,7 +3153,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   };
 
   /**
-   * Check if the XHR transport supports corss domain requests.
+   * Check if the XHR transport supports cross domain requests.
    *
    * @returns {Boolean}
    * @api public
